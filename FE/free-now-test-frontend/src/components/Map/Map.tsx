@@ -15,9 +15,11 @@ const center = {
 
 interface MapProps {
     currentPageVehicles: Vehicle[];
+    selectedVehicle: Vehicle | null;
+    onVehicleSelect: (vehicle: Vehicle | null) => void;
 }
 
-const Map = ({ currentPageVehicles }: MapProps) => {
+const Map = ({ currentPageVehicles, selectedVehicle, onVehicleSelect }: MapProps) => {
     const mapOptions = {
         disableDefaultUI: true,
         zoomControl: true,
@@ -39,18 +41,19 @@ const Map = ({ currentPageVehicles }: MapProps) => {
         ]
     };
 
-    const getMarkerIcon = (state: string) => {
-        const isActive = state === 'ACTIVE';
+    const getMarkerIcon = (vehicle: Vehicle) => {
+        const isActive = vehicle.state === 'ACTIVE';
+        const isSelected = selectedVehicle?.id === vehicle.id;
         return {
             path: window.google?.maps?.SymbolPath?.CIRCLE,
-            fillColor: isActive ? '#4CAF50' : '#F44336', // Green for active, Red for inactive
-            fillOpacity: 0.8,
-            strokeWeight: 1,
-            strokeColor: '#FFFFFF',
-            scale: isActive ? 10 : 8, // Slightly larger for active vehicles
+            fillColor: isSelected ? '#FFD700' : (isActive ? '#4CAF50' : '#F44336'), // Gold for selected, Green for active, Red for inactive
+            fillOpacity: isSelected ? 1 : 0.8,
+            strokeWeight: isSelected ? 2 : 1,
+            strokeColor: isSelected ? '#000000' : '#FFFFFF',
+            scale: isSelected ? 12 : (isActive ? 10 : 8), // Larger for selected, then active
             label: {
                 text: isActive ? '✓' : '✕', // Checkmark for active, X for inactive
-                color: '#FFFFFF',
+                color: isSelected ? '#000000' : '#FFFFFF',
                 fontSize: '12px',
                 fontWeight: 'bold'
             }
@@ -74,7 +77,8 @@ const Map = ({ currentPageVehicles }: MapProps) => {
                                 lng: vehicle.coordinates[0]
                             }}
                             title={`${vehicle.licencePlate} - ${vehicle.state}`}
-                            icon={getMarkerIcon(vehicle.state)}
+                            icon={getMarkerIcon(vehicle)}
+                            onClick={() => onVehicleSelect(vehicle)}
                         />
                     ))}
                 </GoogleMap>

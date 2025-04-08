@@ -7,6 +7,8 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    background-color: white;
+    overflow: hidden;
 }
 
 .table-scroll-container {
@@ -61,6 +63,7 @@
     border-collapse: collapse;
     table-layout: auto;
     min-width: 100%;
+    background-color: white;
 }
 
 .data-table thead {
@@ -118,6 +121,16 @@
 
 .data-table tr:hover {
     background-color: #FCFCFC;
+    cursor: pointer;
+}
+
+.data-table tr.selected {
+    background-color: #FFF3CD;
+    cursor: pointer;
+}
+
+.data-table tr.selected:hover {
+    background-color: #FFE69C;
 }
 
 .data-table tr:last-child td {

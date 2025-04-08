@@ -7,10 +7,21 @@ interface TableProps {
     onPageChange: (page: number) => void;
     sortOrder: 'asc' | 'desc';
     onSort: () => void;
+    selectedVehicle: Vehicle | null;
+    onVehicleSelect: (vehicle: Vehicle | null) => void;
+    itemsPerPage: number;
 }
 
-const Table = ({ vehicles, currentPage, onPageChange, sortOrder, onSort }: TableProps) => {
-    const itemsPerPage = 10;
+const Table = ({
+    vehicles,
+    currentPage,
+    onPageChange,
+    sortOrder,
+    onSort,
+    selectedVehicle,
+    onVehicleSelect,
+    itemsPerPage
+}: TableProps) => {
     const totalPages = Math.ceil(vehicles.length / itemsPerPage);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -41,7 +52,11 @@ const Table = ({ vehicles, currentPage, onPageChange, sortOrder, onSort }: Table
                     </thead>
                     <tbody>
                         {currentVehicles.map((vehicle) => (
-                            <tr key={vehicle.id}>
+                            <tr
+                                key={vehicle.id}
+                                className={selectedVehicle?.id === vehicle.id ? 'selected' : ''}
+                                onClick={() => onVehicleSelect(vehicle)}
+                            >
                                 <td>{vehicle.engineType}</td>
                                 <td>{vehicle.licencePlate}</td>
                                 <td>{`${vehicle.coordinates[0]}, ${vehicle.coordinates[1]}`}</td>

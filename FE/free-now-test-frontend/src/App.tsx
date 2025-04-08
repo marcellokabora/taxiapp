@@ -8,7 +8,8 @@ function App() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const itemsPerPage = 20;
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     // In a real application, this would be an API call
@@ -45,13 +46,20 @@ function App() {
         <img src="/Logo.png" alt="FREE NOW" className="logo" />
       </div>
       <div className="dashboard-layout">
-        <Map vehicles={sortedVehicles} currentPageVehicles={currentPageVehicles} />
+        <Map
+          currentPageVehicles={currentPageVehicles}
+          selectedVehicle={selectedVehicle}
+          onVehicleSelect={setSelectedVehicle}
+        />
         <Table
           vehicles={sortedVehicles}
           currentPage={currentPage}
           onPageChange={setCurrentPage}
           sortOrder={sortOrder}
           onSort={handleSort}
+          selectedVehicle={selectedVehicle}
+          onVehicleSelect={setSelectedVehicle}
+          itemsPerPage={itemsPerPage}
         />
       </div>
     </div>

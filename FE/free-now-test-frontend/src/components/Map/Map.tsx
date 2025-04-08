@@ -4,7 +4,7 @@ import './Map.css';
 
 const mapContainerStyle = {
     width: '100%',
-    height: '100%'  // Changed to 100% to fill container
+    height: '100%'
 };
 
 // Center of Hamburg
@@ -13,32 +13,50 @@ const center = {
     lng: 9.9937
 };
 
-const mapOptions = {
-    disableDefaultUI: true,
-    zoomControl: true,
-    zoomControlOptions: {
-        position: google.maps.ControlPosition.TOP_RIGHT
-    },
-    fullscreenControl: true,
-    fullscreenControlOptions: {
-        position: google.maps.ControlPosition.RIGHT_BOTTOM
-    },
-    mapTypeControl: false,
-    streetViewControl: false,
-    styles: [
-        {
-            featureType: "poi",
-            elementType: "labels",
-            stylers: [{ visibility: "off" }]
-        }
-    ]
-};
-
 interface MapProps {
-    vehicles: Vehicle[];
+    currentPageVehicles: Vehicle[];
 }
 
-const Map = ({ vehicles }: MapProps) => {
+const Map = ({ currentPageVehicles }: MapProps) => {
+    const mapOptions = {
+        disableDefaultUI: true,
+        zoomControl: true,
+        zoomControlOptions: {
+            position: window.google?.maps?.ControlPosition?.TOP_RIGHT
+        },
+        fullscreenControl: true,
+        fullscreenControlOptions: {
+            position: window.google?.maps?.ControlPosition?.RIGHT_BOTTOM
+        },
+        mapTypeControl: false,
+        streetViewControl: false,
+        styles: [
+            {
+                featureType: "poi",
+                elementType: "labels",
+                stylers: [{ visibility: "off" }]
+            }
+        ]
+    };
+
+    const getMarkerIcon = (state: string) => {
+        const isActive = state === 'ACTIVE';
+        return {
+            path: window.google?.maps?.SymbolPath?.CIRCLE,
+            fillColor: isActive ? '#4CAF50' : '#F44336', // Green for active, Red for inactive
+            fillOpacity: 0.8,
+            strokeWeight: 1,
+            strokeColor: '#FFFFFF',
+            scale: isActive ? 10 : 8, // Slightly larger for active vehicles
+            label: {
+                text: isActive ? '✓' : '✕', // Checkmark for active, X for inactive
+                color: '#FFFFFF',
+                fontSize: '12px',
+                fontWeight: 'bold'
+            }
+        };
+    };
+
     return (
         <div className="map-container">
             <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
@@ -48,7 +66,7 @@ const Map = ({ vehicles }: MapProps) => {
                     zoom={12}
                     options={mapOptions}
                 >
-                    {vehicles.map((vehicle) => (
+                    {currentPageVehicles.map((vehicle) => (
                         <Marker
                             key={vehicle.id}
                             position={{
@@ -56,13 +74,7 @@ const Map = ({ vehicles }: MapProps) => {
                                 lng: vehicle.coordinates[0]
                             }}
                             title={`${vehicle.licencePlate} - ${vehicle.state}`}
-                            icon={{
-                                path: google.maps.SymbolPath.CIRCLE,
-                                fillColor: vehicle.state === 'ACTIVE' ? '#00ff00' : '#ff0000',
-                                fillOpacity: 1,
-                                strokeWeight: 1,
-                                scale: 8
-                            }}
+                            icon={getMarkerIcon(vehicle.state)}
                         />
                     ))}
                 </GoogleMap>

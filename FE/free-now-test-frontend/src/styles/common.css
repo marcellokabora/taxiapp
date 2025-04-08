@@ -62,3 +62,19 @@
     flex: 1;
     min-height: 0;
 }
+
+/* Tablet and mobile styles */
+@media screen and (max-width: 1024px) {
+    .dashboard-layout {
+        flex-direction: column;
+    }
+
+    .map-container {
+        flex: 1;
+        min-height: 400px;
+    }
+
+    .table-container {
+        flex: 1;
+    }
+}

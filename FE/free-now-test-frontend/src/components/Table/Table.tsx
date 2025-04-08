@@ -1,14 +1,16 @@
 import { Vehicle } from '../../types/vehicles';
-import { useState } from 'react';
 import './Table.css';
 
 interface TableProps {
     vehicles: Vehicle[];
+    currentPage: number;
+    onPageChange: (page: number) => void;
+    sortOrder: 'asc' | 'desc';
+    onSort: () => void;
 }
 
-const Table = ({ vehicles }: TableProps) => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 20;
+const Table = ({ vehicles, currentPage, onPageChange, sortOrder, onSort }: TableProps) => {
+    const itemsPerPage = 10;
     const totalPages = Math.ceil(vehicles.length / itemsPerPage);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -17,7 +19,7 @@ const Table = ({ vehicles }: TableProps) => {
 
     const handlePageChange = (page: number) => {
         if (page >= 1 && page <= totalPages) {
-            setCurrentPage(page);
+            onPageChange(page);
         }
     };
 
@@ -28,7 +30,9 @@ const Table = ({ vehicles }: TableProps) => {
                     <thead>
                         <tr>
                             <th>Type</th>
-                            <th>License Plate</th>
+                            <th className="sortable" onClick={onSort}>
+                                License Plate {sortOrder === 'asc' ? '↑' : '↓'}
+                            </th>
                             <th>Coordinates</th>
                             <th>Address</th>
                             <th>State</th>

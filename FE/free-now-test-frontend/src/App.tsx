@@ -1,8 +1,27 @@
 import { useState, useEffect } from 'react'
 import Map from './components/Map/Map'
 import Table from './components/Table/Table'
-import { Vehicle, VehiclesData } from './types/vehicles'
+import { Vehicle } from './types/vehicles'
 import './styles/common.css'
+
+interface ShareNowResponse {
+  placemarks: Vehicle[];
+}
+
+interface FreeNowVehicle {
+  id: number;
+  coordinate: {
+    latitude: number;
+    longitude: number;
+  };
+  state: 'ACTIVE' | 'INACTIVE';
+  licencePlate: string;
+  condition: 'BAD' | 'GOOD' | 'EXCELLENT';
+}
+
+interface FreeNowResponse {
+  poiList: FreeNowVehicle[];
+}
 
 function App() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -12,11 +31,33 @@ function App() {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    // In a real application, this would be an API call
-    fetch('http://localhost:5001/share-now/vehicles')
-      .then(response => response.json())
-      .then((data: VehiclesData) => {
-        setVehicles(data.placemarks);
+    // Load both Share Now and Free Now vehicles
+    Promise.all([
+      fetch('http://localhost:5001/share-now/vehicles').then(response => response.json() as Promise<ShareNowResponse>),
+      fetch('http://localhost:5001/free-now/vehicles').then(response => response.json() as Promise<FreeNowResponse>)
+    ])
+      .then(([shareNowData, freeNowData]) => {
+        // Transform Share Now vehicles
+        const shareNowVehicles: Vehicle[] = shareNowData.placemarks.map(vehicle => ({
+          ...vehicle,
+          provider: 'SHARE NOW' as const
+        }));
+
+        // Transform Free Now vehicles to match the Vehicle interface
+        const freeNowVehicles: Vehicle[] = freeNowData.poiList.map(vehicle => ({
+          address: '', // Free Now doesn't provide address
+          coordinates: [vehicle.coordinate.longitude, vehicle.coordinate.latitude, 0],
+          engineType: 'PETROL', // Default to PETROL as Free Now doesn't provide this info
+          condition: vehicle.condition,
+          fuel: undefined, // Default to 100 as Free Now doesn't provide this info
+          state: vehicle.state,
+          licencePlate: vehicle.licencePlate,
+          id: vehicle.id,
+          provider: 'FREE NOW' as const
+        }));
+
+        // Combine both sets of vehicles
+        setVehicles([...shareNowVehicles, ...freeNowVehicles]);
       })
       .catch(error => {
         console.error('Error fetching vehicles:', error);

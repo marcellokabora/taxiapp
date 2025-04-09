@@ -35,12 +35,12 @@ const Table = ({
     };
 
     return (
-        <div className="table-container">
+        <div className="table-container card">
             <div className="table-scroll-container">
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th>Type</th>
+                            <th>Provider</th>
                             <th className="sortable" onClick={onSort}>
                                 License Plate {sortOrder === 'asc' ? '↑' : '↓'}
                             </th>
@@ -57,18 +57,36 @@ const Table = ({
                                 className={selectedVehicle?.id === vehicle.id ? 'selected' : ''}
                                 onClick={() => onVehicleSelect(vehicle)}
                             >
-                                <td>{vehicle.engineType}</td>
+                                <td>
+                                    <span className={`provider-badge ${vehicle.provider.toLowerCase().replace(' ', '-')}`}>
+                                        {vehicle.provider}
+                                    </span>
+                                </td>
                                 <td>{vehicle.licencePlate}</td>
                                 <td>{`${vehicle.coordinates[0]}, ${vehicle.coordinates[1]}`}</td>
-                                <td>{vehicle.address}</td>
+                                <td>{vehicle.address || '-'}</td>
                                 <td>
                                     <span className={`status-badge ${vehicle.state.toLowerCase()}`}>
-                                        {vehicle.state}
+                                        {vehicle.state.toLocaleLowerCase()}
                                     </span>
                                 </td>
                                 <td>
                                     <span className={`condition-badge ${vehicle.condition.toLowerCase()}`}>
-                                        {vehicle.condition}
+                                        {vehicle.fuel !== undefined && (
+                                            <img
+                                                src={vehicle.fuel > 50 ? '/battery_full.png' : '/battery_low.png'}
+                                                alt={`Fuel: ${vehicle.fuel}%`}
+                                                width="24"
+                                                height="24"
+                                                style={{ marginRight: '8px' }}
+                                            />
+                                        )}
+                                        <img
+                                            src={vehicle.condition.toLowerCase() === 'bad' ? '/condition_bad.png' : '/condition_good.png'}
+                                            alt={vehicle.condition}
+                                            width="24"
+                                            height="24"
+                                        />
                                     </span>
                                 </td>
                             </tr>

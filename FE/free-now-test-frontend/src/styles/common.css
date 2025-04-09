@@ -4,6 +4,7 @@
     margin: 0;
     padding: 0;
     background-color: #f1f1f1;
+    overflow-y: auto;
 }
 
 .header {
@@ -11,6 +12,7 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    border-bottom: 1px solid rgb(212, 212, 212);
 }
 
 .logo {
@@ -19,11 +21,10 @@
 }
 
 .card {
-    padding: 2em;
-}
-
-.read-the-docs {
-    color: #888;
+    border-radius: 8px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    background-color: white;
 }
 
 .app-container {
@@ -50,6 +51,8 @@
 @media screen and (max-width: 1024px) {
     .dashboard-layout {
         flex-direction: column;
+        height: auto;
+        min-height: 100vh;
     }
 
     .map-container {
@@ -59,5 +62,7 @@
 
     .table-container {
         flex: 1;
+        height: auto;
+        overflow: visible;
     }
 }

@@ -1,6 +1,6 @@
 import { Vehicle, ShareNowVehicle, FreeNowVehicle } from '../../types/vehicles';
 import './Table.css';
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 
 interface TableProps {
     vehicles: Vehicle[];
@@ -11,6 +11,7 @@ interface TableProps {
     selectedVehicle: Vehicle | null;
     onVehicleSelect: (vehicle: Vehicle | null) => void;
     itemsPerPage: number;
+    isLoading?: boolean;
 }
 
 const getVehicleCoordinates = (vehicle: Vehicle): string => {
@@ -47,14 +48,17 @@ const Table = ({
     onSort,
     selectedVehicle,
     onVehicleSelect,
-    itemsPerPage
+    itemsPerPage,
+    isLoading = false
 }: TableProps) => {
     const totalPages = Math.ceil(vehicles.length / itemsPerPage);
     const tableRef = useRef<HTMLDivElement>(null);
 
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentVehicles = vehicles.slice(startIndex, endIndex);
+    const currentVehicles = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        return vehicles.slice(startIndex, endIndex);
+    }, [vehicles, currentPage, itemsPerPage]);
 
     const scrollToTop = () => {
         // Scroll the table to top
@@ -72,20 +76,36 @@ const Table = ({
         }
     };
 
+    if (isLoading) {
+        return (
+            <div className="table-container card" role="status" aria-label="Loading vehicles">
+                <div className="loading-spinner">Loading vehicles...</div>
+            </div>
+        );
+    }
+
+    if (vehicles.length === 0) {
+        return (
+            <div className="table-container card" role="status" aria-label="No vehicles available">
+                <div className="empty-state">No vehicles available</div>
+            </div>
+        );
+    }
+
     return (
-        <div className="table-container card">
+        <div className="table-container card" role="region" aria-label="Vehicles table">
             <div className="table-scroll-container" ref={tableRef}>
                 <table className="data-table">
                     <thead>
                         <tr>
-                            <th>Provider</th>
-                            <th className="sortable" onClick={onSort}>
+                            <th scope="col">Provider</th>
+                            <th scope="col" className="sortable" onClick={onSort} tabIndex={0} role="button" aria-sort={sortOrder === 'asc' ? 'ascending' : 'descending'}>
                                 License Plate {sortOrder === 'asc' ? '↑' : '↓'}
                             </th>
-                            <th>Coordinates</th>
-                            <th>Address</th>
-                            <th>State</th>
-                            <th>Condition</th>
+                            <th scope="col">Coordinates</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Condition</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,6 +114,14 @@ const Table = ({
                                 key={vehicle.id}
                                 className={selectedVehicle?.id === vehicle.id ? 'selected' : ''}
                                 onClick={() => onVehicleSelect(vehicle)}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        onVehicleSelect(vehicle);
+                                    }
+                                }}
+                                aria-selected={selectedVehicle?.id === vehicle.id}
                             >
                                 <td>
                                     <span className={`provider-badge ${vehicle.provider.toLowerCase().replace(' ', '-')}`}>
@@ -109,35 +137,34 @@ const Table = ({
                                     </span>
                                 </td>
                                 <td>
-                                    <span className={`condition-badge ${vehicle.condition.toLowerCase()}`}>
-                                        {getVehicleFuel(vehicle) !== undefined && (
-                                            <img
-                                                src={getVehicleFuel(vehicle)! > 50 ? '/battery_full.svg' : '/battery_low.svg'}
-                                                alt={`Fuel: ${getVehicleFuel(vehicle)}%`}
-                                                width="24"
-                                                height="24"
-                                                style={{ marginRight: '8px' }}
-                                            />
-                                        )}
+                                    {getVehicleFuel(vehicle) !== undefined && (
                                         <img
-                                            src={vehicle.condition.toLowerCase() === 'bad' ? '/condition_bad.svg' : '/condition_good.svg'}
-                                            alt={vehicle.condition}
-                                            width="24"
-                                            height="24"
+                                            src={getVehicleFuel(vehicle)! > 50 ? '/battery_full.svg' : '/battery_low.svg'}
+                                            alt={`Fuel: ${getVehicleFuel(vehicle)}%`}
+                                            width="20"
+                                            height="20"
+                                            style={{ marginRight: '8px' }}
                                         />
-                                    </span>
+                                    )}
+                                    <img
+                                        src={vehicle.condition.toLowerCase() === 'bad' ? '/condition_bad.svg' : '/condition_good.svg'}
+                                        alt={vehicle.condition}
+                                        width="20"
+                                        height="20"
+                                    />
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
-            <div className="pagination-container">
+            <div className="pagination-container" role="navigation" aria-label="Pagination">
                 <button
                     onClick={() => handlePageChange(1)}
                     disabled={currentPage === 1}
                     className="pagination-button"
                     title="First page"
+                    aria-label="Go to first page"
                 >
                     ««
                 </button>
@@ -146,10 +173,11 @@ const Table = ({
                     disabled={currentPage === 1}
                     className="pagination-button"
                     title="Previous page"
+                    aria-label="Go to previous page"
                 >
                     «
                 </button>
-                <div className="pagination-info">
+                <div className="pagination-info" aria-live="polite">
                     Page {currentPage} of {totalPages}
                 </div>
                 <button
@@ -157,6 +185,7 @@ const Table = ({
                     disabled={currentPage === totalPages}
                     className="pagination-button"
                     title="Next page"
+                    aria-label="Go to next page"
                 >
                     »
                 </button>
@@ -165,9 +194,13 @@ const Table = ({
                     disabled={currentPage === totalPages}
                     className="pagination-button"
                     title="Last page"
+                    aria-label="Go to last page"
                 >
                     »»
                 </button>
+                <div className="pagination-info-mobile" aria-live="polite">
+                    Page {currentPage} of {totalPages}
+                </div>
             </div>
         </div>
     );

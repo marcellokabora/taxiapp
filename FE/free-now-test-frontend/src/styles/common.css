@@ -64,6 +64,25 @@
     flex-direction: column;
 }
 
+/* Button Styles */
+button {
+    border-radius: var(--border-radius-lg);
+    border: 1px solid transparent;
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    font-family: var(--font-family);
+    background-color: var(--color-black);
+    color: var(--color-white);
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+
+button:focus,
+button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+}
+
 /* Responsive layout for screens below 1200px */
 @media screen and (max-width: 1200px) {
     .map-wrapper {
@@ -84,11 +103,6 @@
 
     .map-wrapper,
     .table-wrapper {
-        flex: 1;
-        min-height: 400px;
-    }
-
-    .map-container {
         flex: 1;
         min-height: 400px;
     }

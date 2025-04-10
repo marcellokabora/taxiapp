@@ -65,21 +65,25 @@ function App() {
         <img src="/Logo.png" alt="FREE NOW" className="logo" />
       </div>
       <div className="dashboard-layout">
-        <Map
-          currentPageVehicles={currentPageVehicles}
-          selectedVehicle={selectedVehicle}
-          onVehicleSelect={setSelectedVehicle}
-        />
-        <Table
-          vehicles={sortedVehicles}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-          sortOrder={sortOrder}
-          onSort={handleSort}
-          selectedVehicle={selectedVehicle}
-          onVehicleSelect={setSelectedVehicle}
-          itemsPerPage={itemsPerPage}
-        />
+        <div className="map-wrapper">
+          <Map
+            currentPageVehicles={currentPageVehicles}
+            selectedVehicle={selectedVehicle}
+            onVehicleSelect={setSelectedVehicle}
+          />
+        </div>
+        <div className="table-wrapper">
+          <Table
+            vehicles={sortedVehicles}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            sortOrder={sortOrder}
+            onSort={handleSort}
+            selectedVehicle={selectedVehicle}
+            onVehicleSelect={setSelectedVehicle}
+            itemsPerPage={itemsPerPage}
+          />
+        </div>
       </div>
     </div>
   )

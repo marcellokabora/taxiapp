@@ -6,12 +6,14 @@
     position: relative;
     background-color: white;
     overflow: hidden;
+    height: 100%;
 }
 
 .table-scroll-container {
     overflow-x: auto;
     overflow-y: auto;
     flex: 1;
+    min-height: 0;
 }
 
 .pagination-container {

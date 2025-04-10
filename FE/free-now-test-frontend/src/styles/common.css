@@ -46,11 +46,44 @@
     min-height: 0;
 }
 
+.map-wrapper {
+    flex: 0.4;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-wrapper {
+    flex: 0.6;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Responsive layout for screens below 1200px */
+@media screen and (max-width: 1200px) {
+    .map-wrapper {
+        flex: 0.3;
+    }
+
+    .table-wrapper {
+        flex: 0.7;
+    }
+}
+
 /* Tablet and mobile styles */
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 993px) {
     .dashboard-layout {
         flex-direction: column;
         height: auto;
+    }
+
+    .map-wrapper,
+    .table-wrapper {
+        flex: 1;
+        min-height: 400px;
     }
 
     .map-container {

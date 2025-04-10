@@ -1,4 +1,4 @@
-import { Vehicle } from '../../types/vehicles';
+import { Vehicle, ShareNowVehicle, FreeNowVehicle } from '../../types/vehicles';
 import './Table.css';
 import { useRef } from 'react';
 
@@ -12,6 +12,32 @@ interface TableProps {
     onVehicleSelect: (vehicle: Vehicle | null) => void;
     itemsPerPage: number;
 }
+
+const getVehicleCoordinates = (vehicle: Vehicle): string => {
+    if (vehicle.provider === 'SHARE NOW') {
+        const shareVehicle = vehicle as ShareNowVehicle;
+        return `${shareVehicle.coordinates[0]}, ${shareVehicle.coordinates[1]}`;
+    } else {
+        const freeVehicle = vehicle as FreeNowVehicle;
+        return `${freeVehicle.coordinate.longitude}, ${freeVehicle.coordinate.latitude}`;
+    }
+};
+
+const getVehicleAddress = (vehicle: Vehicle): string => {
+    if (vehicle.provider === 'SHARE NOW') {
+        const shareVehicle = vehicle as ShareNowVehicle;
+        return shareVehicle.address;
+    }
+    return '-';
+};
+
+const getVehicleFuel = (vehicle: Vehicle): number | undefined => {
+    if (vehicle.provider === 'SHARE NOW') {
+        const shareVehicle = vehicle as ShareNowVehicle;
+        return shareVehicle.fuel;
+    }
+    return undefined;
+};
 
 const Table = ({
     vehicles,
@@ -75,8 +101,8 @@ const Table = ({
                                     </span>
                                 </td>
                                 <td>{vehicle.licencePlate}</td>
-                                <td>{`${vehicle.coordinates[0]}, ${vehicle.coordinates[1]}`}</td>
-                                <td>{vehicle.address || '-'}</td>
+                                <td>{getVehicleCoordinates(vehicle)}</td>
+                                <td>{getVehicleAddress(vehicle)}</td>
                                 <td>
                                     <span className={`status-badge ${vehicle.state.toLowerCase()}`}>
                                         {vehicle.state.toLocaleLowerCase()}
@@ -84,10 +110,10 @@ const Table = ({
                                 </td>
                                 <td>
                                     <span className={`condition-badge ${vehicle.condition.toLowerCase()}`}>
-                                        {vehicle.fuel !== undefined && (
+                                        {getVehicleFuel(vehicle) !== undefined && (
                                             <img
-                                                src={vehicle.fuel > 50 ? '/battery_full.svg' : '/battery_low.svg'}
-                                                alt={`Fuel: ${vehicle.fuel}%`}
+                                                src={getVehicleFuel(vehicle)! > 50 ? '/battery_full.svg' : '/battery_low.svg'}
+                                                alt={`Fuel: ${getVehicleFuel(vehicle)}%`}
                                                 width="24"
                                                 height="24"
                                                 style={{ marginRight: '8px' }}

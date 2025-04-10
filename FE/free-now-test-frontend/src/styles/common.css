@@ -4,7 +4,6 @@
     margin: 0;
     padding: 0;
     background-color: #f1f1f1;
-    overflow-y: auto;
 }
 
 .header {
@@ -52,7 +51,6 @@
     .dashboard-layout {
         flex-direction: column;
         height: auto;
-        min-height: 100vh;
     }
 
     .map-container {

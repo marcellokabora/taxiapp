@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Map from './components/Map/Map'
 import Table from './components/Table/Table'
-import { Vehicle, ShareNowResponse, FreeNowResponse } from './types/vehicles'
+import { Vehicle, ShareNowVehicle, FreeNowVehicle, ShareNowResponse, FreeNowResponse } from './types/vehicles'
 import './styles/common.css'
 
 function App() {
@@ -19,21 +19,18 @@ function App() {
     ])
       .then(([shareNowData, freeNowData]) => {
         // Transform Share Now vehicles
-        const shareNowVehicles: Vehicle[] = shareNowData.placemarks.map(vehicle => ({
+        const shareNowVehicles: ShareNowVehicle[] = shareNowData.placemarks.map(vehicle => ({
           ...vehicle,
           provider: 'SHARE NOW' as const
         }));
 
-        // Transform Free Now vehicles to match the Vehicle interface
-        const freeNowVehicles: Vehicle[] = freeNowData.poiList.map(vehicle => ({
-          address: '', // Free Now doesn't provide address
-          coordinates: [vehicle.coordinate.longitude, vehicle.coordinate.latitude, 0],
-          engineType: 'PETROL', // Default to PETROL as Free Now doesn't provide this info
-          condition: vehicle.condition,
-          fuel: undefined, // Default to 100 as Free Now doesn't provide this info
+        // Transform Free Now vehicles
+        const freeNowVehicles: FreeNowVehicle[] = freeNowData.poiList.map(vehicle => ({
+          id: vehicle.id,
+          coordinate: vehicle.coordinate,
           state: vehicle.state,
           licencePlate: vehicle.licencePlate,
-          id: vehicle.id,
+          condition: vehicle.condition,
           provider: 'FREE NOW' as const
         }));
 

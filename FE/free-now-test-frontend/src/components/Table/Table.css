@@ -131,10 +131,6 @@
     cursor: pointer;
 }
 
-.data-table tr.selected:hover {
-    background-color: #FFD1D1;
-}
-
 .data-table tr:last-child td {
     border-bottom: none;
 }

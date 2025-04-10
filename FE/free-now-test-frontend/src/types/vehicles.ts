@@ -1,34 +1,51 @@
 export type VehicleProvider = 'FREE NOW' | 'SHARE NOW';
+export type VehicleCondition = 'BAD' | 'GOOD' | 'EXCELLENT';
+export type VehicleState = 'ACTIVE' | 'INACTIVE';
+export type EngineType = 'PETROL' | 'ELECTRIC' | 'DIESEL';
 
-export interface Vehicle {
-    address: string;
-    coordinates: [number, number, number];
-    engineType: 'PETROL' | 'ELECTRIC' | 'DIESEL';
-    condition: 'BAD' | 'GOOD' | 'EXCELLENT';
-    fuel: number | undefined;
-    state: 'ACTIVE' | 'INACTIVE';
-    licencePlate: string;
+export interface BaseVehicle {
     id: number;
+    state: VehicleState;
+    licencePlate: string;
+    condition: VehicleCondition;
     provider: VehicleProvider;
 }
 
-export interface VehiclesData {
-    placemarks: Vehicle[];
+export interface ShareNowCoordinates {
+    coordinates: [number, number, number];
 }
 
-export interface ShareNowResponse {
-    placemarks: Vehicle[];
-}
-
-export interface FreeNowVehicle {
-    id: number;
+export interface FreeNowCoordinates {
     coordinate: {
         latitude: number;
         longitude: number;
     };
-    state: 'ACTIVE' | 'INACTIVE';
-    licencePlate: string;
-    condition: 'BAD' | 'GOOD' | 'EXCELLENT';
+}
+
+export interface ShareNowVehicle extends BaseVehicle {
+    address: string;
+    coordinates: [number, number, number];
+    engineType: EngineType;
+    fuel: number | undefined;
+    provider: 'SHARE NOW';
+}
+
+export interface FreeNowVehicle extends BaseVehicle {
+    coordinate: {
+        latitude: number;
+        longitude: number;
+    };
+    provider: 'FREE NOW';
+}
+
+export type Vehicle = ShareNowVehicle | FreeNowVehicle;
+
+export interface VehiclesData {
+    placemarks: ShareNowVehicle[];
+}
+
+export interface ShareNowResponse {
+    placemarks: ShareNowVehicle[];
 }
 
 export interface FreeNowResponse {

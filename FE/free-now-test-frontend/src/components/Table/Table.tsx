@@ -1,5 +1,6 @@
 import { Vehicle } from '../../types/vehicles';
 import './Table.css';
+import { useRef } from 'react';
 
 interface TableProps {
     vehicles: Vehicle[];
@@ -23,20 +24,31 @@ const Table = ({
     itemsPerPage
 }: TableProps) => {
     const totalPages = Math.ceil(vehicles.length / itemsPerPage);
+    const tableRef = useRef<HTMLDivElement>(null);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const currentVehicles = vehicles.slice(startIndex, endIndex);
 
+    const scrollToTop = () => {
+        // Scroll the table to top
+        if (tableRef.current) {
+            tableRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        // Scroll the main page to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     const handlePageChange = (page: number) => {
         if (page >= 1 && page <= totalPages) {
             onPageChange(page);
+            scrollToTop();
         }
     };
 
     return (
         <div className="table-container card">
-            <div className="table-scroll-container">
+            <div className="table-scroll-container" ref={tableRef}>
                 <table className="data-table">
                     <thead>
                         <tr>
@@ -74,7 +86,7 @@ const Table = ({
                                     <span className={`condition-badge ${vehicle.condition.toLowerCase()}`}>
                                         {vehicle.fuel !== undefined && (
                                             <img
-                                                src={vehicle.fuel > 50 ? '/battery_full.png' : '/battery_low.png'}
+                                                src={vehicle.fuel > 50 ? '/battery_full.svg' : '/battery_low.svg'}
                                                 alt={`Fuel: ${vehicle.fuel}%`}
                                                 width="24"
                                                 height="24"
@@ -82,7 +94,7 @@ const Table = ({
                                             />
                                         )}
                                         <img
-                                            src={vehicle.condition.toLowerCase() === 'bad' ? '/condition_bad.png' : '/condition_good.png'}
+                                            src={vehicle.condition.toLowerCase() === 'bad' ? '/condition_bad.svg' : '/condition_good.svg'}
                                             alt={vehicle.condition}
                                             width="24"
                                             height="24"

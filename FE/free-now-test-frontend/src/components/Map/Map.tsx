@@ -85,7 +85,7 @@ const Map = ({ currentPageVehicles, selectedVehicle, onVehicleSelect }: MapProps
 
         const isActive = vehicle.state === 'ACTIVE';
         const isSelected = selectedVehicle?.id === vehicle.id;
-        const iconUrl = isActive ? '/marker_blue.png' : '/marker_black.png';
+        const iconUrl = isActive ? '/marker_blue.svg' : '/marker_black.svg';
 
         return {
             url: iconUrl,

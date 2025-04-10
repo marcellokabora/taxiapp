@@ -14,4 +14,23 @@ export interface Vehicle {
 
 export interface VehiclesData {
     placemarks: Vehicle[];
+}
+
+export interface ShareNowResponse {
+    placemarks: Vehicle[];
+}
+
+export interface FreeNowVehicle {
+    id: number;
+    coordinate: {
+        latitude: number;
+        longitude: number;
+    };
+    state: 'ACTIVE' | 'INACTIVE';
+    licencePlate: string;
+    condition: 'BAD' | 'GOOD' | 'EXCELLENT';
+}
+
+export interface FreeNowResponse {
+    poiList: FreeNowVehicle[];
 } 

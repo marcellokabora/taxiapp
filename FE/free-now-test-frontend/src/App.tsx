@@ -1,27 +1,8 @@
 import { useState, useEffect } from 'react'
 import Map from './components/Map/Map'
 import Table from './components/Table/Table'
-import { Vehicle } from './types/vehicles'
+import { Vehicle, ShareNowResponse, FreeNowResponse } from './types/vehicles'
 import './styles/common.css'
-
-interface ShareNowResponse {
-  placemarks: Vehicle[];
-}
-
-interface FreeNowVehicle {
-  id: number;
-  coordinate: {
-    latitude: number;
-    longitude: number;
-  };
-  state: 'ACTIVE' | 'INACTIVE';
-  licencePlate: string;
-  condition: 'BAD' | 'GOOD' | 'EXCELLENT';
-}
-
-interface FreeNowResponse {
-  poiList: FreeNowVehicle[];
-}
 
 function App() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);

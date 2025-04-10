@@ -59,7 +59,7 @@ const Table = ({
     const scrollToTop = () => {
         // Scroll the table to top
         if (tableRef.current) {
-            tableRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+            tableRef.current.scrollTop = 0;
         }
         // Scroll the main page to top
         window.scrollTo({ top: 0, behavior: 'smooth' });

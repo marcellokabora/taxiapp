@@ -1,6 +1,6 @@
-# FREE NOW Frontend Test 🖼
+# TAXI NOW Frontend Test 🖼
 
-Welcome to the FREE NOW Frontend take-home challenge. The aim of this test is to show off your skills!
+Welcome to the TAXI NOW Frontend take-home challenge. The aim of this test is to show off your skills!
 
 What do we want to see:
 
@@ -14,7 +14,7 @@ Long story short, it should be like a real-world project!
 
 The app should contain the following features:
 
-- A **map** and a **table**, both showing the vehicles from the FREE NOW and SHARE NOW lists. You can load the vehicles from the server that you'll start (info on starting it in the "Server Setup" section). The vehicles in the table and in the map should be the same.
+- A **map** and a **table**, both showing the vehicles from the TAXI NOW and SHARE TAXI lists. You can load the vehicles from the server that you'll start (info on starting it in the "Server Setup" section). The vehicles in the table and in the map should be the same.
 - **Sort** the results by “Licence plate”
 - **Paginate** the results from the APIs to show just up to 10 vehicles in the table and in the map
 - If we click on a row in the table, we should **highlight** the corresponding marker in the map
@@ -24,7 +24,7 @@ The table should display the following information about each vehicle:
 **Coordinates**: “12.234543 52.834729”
 **Licence plate**: “HHZ 234 1259”
 **Address**: “Kroogblöcke 32, 22119 Hamburg”
-**Type**: “FREE NOW” | “SHARE NOW”
+**Type**: “TAXI NOW” | “SHARE TAXI”
 **State**: “Active” | “Inactive”
 **Conditions**: “Bad conditions” | “Good conditions” & “Low fuel” | “Medium fuel” | “Full fuel”
 
@@ -37,7 +37,7 @@ We’ve made a sample [layout](https://www.figma.com/file/qhCx4LIedUMYjmSd2MAulk
 If you'd like, you can use Create React App or any other CLI to scaffold your React application.
 We also suggest using our [Design System: Wave](https://wave.free-now.com/), to help you build your awesome layout!
 
-At FREE NOW, we use Typescript for type-checking and React testing library for the tests, but you can pick the technologies you feel more comfortable with.
+At TAXI NOW, we use Typescript for type-checking and React testing library for the tests, but you can pick the technologies you feel more comfortable with.
 
 ```bash
 npm create vite@latest free-now-test-frontend -- --template react-swc-ts
@@ -54,15 +54,15 @@ You should see something like: `Listening on Port: 5001`
 Now you can start building your application in the `FE` folder.
 API Routes:
 
-#### Get a list of all FREE NOW vehicles:
+#### Get a list of all TAXI NOW vehicles:
 
 /free-now/vehicles
 
-#### Get a list of all SHARE NOW vehicles:
+#### Get a list of all SHARE TAXI vehicles:
 
 /share-now/vehicles
 
-For example, to get the SHARE NOW vehicles, you can call: http://localhost:5001/share-now/vehicles
+For example, to get the SHARE TAXI vehicles, you can call: http://localhost:5001/share-now/vehicles
 
 ## How to send the solution 📨
 

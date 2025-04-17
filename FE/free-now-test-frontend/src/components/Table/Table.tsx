@@ -15,7 +15,7 @@ interface TableProps {
 }
 
 const getVehicleCoordinates = (vehicle: Vehicle): string => {
-    if (vehicle.provider === 'SHARE NOW') {
+    if (vehicle.provider === 'SHARE TAXI') {
         const shareVehicle = vehicle as ShareNowVehicle;
         return `${shareVehicle.coordinates[0]}, ${shareVehicle.coordinates[1]}`;
     } else {
@@ -25,7 +25,7 @@ const getVehicleCoordinates = (vehicle: Vehicle): string => {
 };
 
 const getVehicleAddress = (vehicle: Vehicle): string => {
-    if (vehicle.provider === 'SHARE NOW') {
+    if (vehicle.provider === 'SHARE TAXI') {
         const shareVehicle = vehicle as ShareNowVehicle;
         return shareVehicle.address;
     }
@@ -33,7 +33,7 @@ const getVehicleAddress = (vehicle: Vehicle): string => {
 };
 
 const getVehicleFuel = (vehicle: Vehicle): number | undefined => {
-    if (vehicle.provider === 'SHARE NOW') {
+    if (vehicle.provider === 'SHARE TAXI') {
         const shareVehicle = vehicle as ShareNowVehicle;
         return shareVehicle.fuel;
     }

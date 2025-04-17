@@ -9,29 +9,29 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   useEffect(() => {
-    // Load both Share Now and Free Now vehicles
+    // Load both SHARE TAXI and TAXI NOW vehicles
     Promise.all([
       fetch('http://localhost:5001/share-now/vehicles').then(response => response.json() as Promise<ShareNowResponse>),
       fetch('http://localhost:5001/free-now/vehicles').then(response => response.json() as Promise<FreeNowResponse>)
     ])
       .then(([shareNowData, freeNowData]) => {
-        // Transform Share Now vehicles
+        // Transform SHARE TAXI vehicles
         const shareNowVehicles: ShareNowVehicle[] = shareNowData.placemarks.map(vehicle => ({
           ...vehicle,
-          provider: 'SHARE NOW' as const
+          provider: 'SHARE TAXI' as const
         }));
 
-        // Transform Free Now vehicles
+        // Transform TAXI NOW vehicles
         const freeNowVehicles: FreeNowVehicle[] = freeNowData.poiList.map(vehicle => ({
           id: vehicle.id,
           coordinate: vehicle.coordinate,
           state: vehicle.state,
           licencePlate: vehicle.licencePlate,
           condition: vehicle.condition,
-          provider: 'FREE NOW' as const
+          provider: 'TAXI NOW' as const
         }));
 
         // Combine both sets of vehicles
@@ -61,9 +61,6 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="header">
-        <img src="/Logo.png" alt="FREE NOW" className="logo" />
-      </div>
       <div className="dashboard-layout">
         <div className="map-wrapper">
           <Map

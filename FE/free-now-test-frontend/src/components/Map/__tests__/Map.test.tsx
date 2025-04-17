@@ -39,7 +39,7 @@ describe('Map Component', () => {
     const mockVehicles: Vehicle[] = [
         {
             id: 1,
-            provider: 'SHARE NOW',
+            provider: 'SHARE TAXI',
             state: 'ACTIVE',
             licencePlate: 'ABC123',
             condition: 'GOOD' as VehicleCondition,
@@ -50,7 +50,7 @@ describe('Map Component', () => {
         } as ShareNowVehicle,
         {
             id: 2,
-            provider: 'FREE NOW',
+            provider: 'TAXI NOW',
             state: 'ACTIVE',
             licencePlate: 'XYZ789',
             condition: 'GOOD' as VehicleCondition,

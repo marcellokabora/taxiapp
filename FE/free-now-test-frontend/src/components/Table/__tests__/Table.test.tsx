@@ -11,7 +11,7 @@ describe('Table Component', () => {
     const mockVehicles: Vehicle[] = [
         {
             id: 1,
-            provider: 'SHARE NOW',
+            provider: 'SHARE TAXI',
             state: 'ACTIVE',
             licencePlate: 'ABC123',
             condition: 'GOOD' as VehicleCondition,
@@ -22,7 +22,7 @@ describe('Table Component', () => {
         } as ShareNowVehicle,
         {
             id: 2,
-            provider: 'FREE NOW',
+            provider: 'TAXI NOW',
             state: 'ACTIVE',
             licencePlate: 'XYZ789',
             condition: 'GOOD' as VehicleCondition,
@@ -49,8 +49,8 @@ describe('Table Component', () => {
         render(<Table {...defaultProps} />);
 
         // Check if provider badges are displayed
-        expect(screen.getByText('SHARE NOW')).toBeInTheDocument();
-        expect(screen.getByText('FREE NOW')).toBeInTheDocument();
+        expect(screen.getByText('SHARE TAXI')).toBeInTheDocument();
+        expect(screen.getByText('TAXI NOW')).toBeInTheDocument();
 
         // Check if license plates are displayed
         expect(screen.getByText('ABC123')).toBeInTheDocument();

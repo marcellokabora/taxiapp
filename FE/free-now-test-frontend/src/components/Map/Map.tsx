@@ -1,4 +1,4 @@
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 import { Vehicle, ShareNowVehicle, FreeNowVehicle } from '../../types/vehicles';
 import './Map.css';
 import { useCallback, useRef, useEffect, useState } from 'react';
@@ -38,7 +38,7 @@ const calculateCenter = (vehicles: Vehicle[]): { lat: number; lng: number } => {
 };
 
 const getVehicleCoordinates = (vehicle: Vehicle): { lat: number; lng: number } => {
-    if (vehicle.provider === 'SHARE NOW') {
+    if (vehicle.provider === 'SHARE TAXI') {
         const shareVehicle = vehicle as ShareNowVehicle;
         return {
             lat: shareVehicle.coordinates[1],
@@ -56,7 +56,10 @@ const getVehicleCoordinates = (vehicle: Vehicle): { lat: number; lng: number } =
 const Map = ({ currentPageVehicles, selectedVehicle, onVehicleSelect }: MapProps) => {
     const mapRef = useRef<google.maps.Map | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isApiLoaded, setIsApiLoaded] = useState(false);
+
+    const { isLoaded: isApiLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+    });
 
     const fitBounds = useCallback(() => {
         if (!mapRef.current || currentPageVehicles.length === 0) return;
@@ -125,42 +128,45 @@ const Map = ({ currentPageVehicles, selectedVehicle, onVehicleSelect }: MapProps
         };
     };
 
+    if (loadError) {
+        console.error('Error loading Google Maps API:', loadError);
+        return <div>Error loading map</div>;
+    }
+
+    if (!isApiLoaded) {
+        return (
+            <div className="loading-spinner">
+                <div className="spinner"></div>
+                <p>Loading map...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="map-container card">
-            <LoadScript
-                googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
-                onLoad={() => {
-                    console.log('Google Maps API loaded');
-                    setIsApiLoaded(true);
-                }}
-                onError={(error) => console.error('Error loading Google Maps API:', error)}
+            <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={calculateCenter(currentPageVehicles)}
+                zoom={12}
+                options={mapOptions}
+                onLoad={onMapLoad}
             >
-                {isApiLoaded && (
-                    <GoogleMap
-                        mapContainerStyle={mapContainerStyle}
-                        center={calculateCenter(currentPageVehicles)}
-                        zoom={12}
-                        options={mapOptions}
-                        onLoad={onMapLoad}
-                    >
-                        {currentPageVehicles.map((vehicle) => {
-                            const icon = getMarkerIcon(vehicle);
-                            if (!icon) return null;
-                            const coords = getVehicleCoordinates(vehicle);
+                {currentPageVehicles.map((vehicle) => {
+                    const icon = getMarkerIcon(vehicle);
+                    if (!icon) return null;
+                    const coords = getVehicleCoordinates(vehicle);
 
-                            return (
-                                <Marker
-                                    key={vehicle.id}
-                                    position={coords}
-                                    title={`${vehicle.licencePlate} - ${vehicle.state}`}
-                                    icon={icon}
-                                    onClick={() => onVehicleSelect(vehicle)}
-                                />
-                            );
-                        })}
-                    </GoogleMap>
-                )}
-            </LoadScript>
+                    return (
+                        <Marker
+                            key={vehicle.id}
+                            position={coords}
+                            title={`${vehicle.licencePlate} - ${vehicle.state}`}
+                            icon={icon}
+                            onClick={() => onVehicleSelect(vehicle)}
+                        />
+                    );
+                })}
+            </GoogleMap>
         </div>
     );
 };

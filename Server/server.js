@@ -9,12 +9,12 @@ app.use(cors());
 const shareNowVehicles = JSON.parse(fs.readFileSync('share-now/vehicles.json', 'utf8'));
 const freeNowVehicles = JSON.parse(fs.readFileSync('free-now/vehicles.json', 'utf8'));
 
-// SHARE NOW ROUTE
+// SHARE TAXI ROUTE
 app.get('/share-now/vehicles', (req, res) => {
     res.send(JSON.stringify(shareNowVehicles));
 });
 
-// FREE NOW ROUTE
+// TAXI NOW ROUTE
 app.get('/free-now/vehicles', (req, res) => {
     res.send(JSON.stringify(freeNowVehicles));
 });

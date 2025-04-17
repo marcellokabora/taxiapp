@@ -1,18 +1,11 @@
-import { Vehicle, ShareNowVehicle, FreeNowVehicle } from '../../types/vehicles';
-import './Table.css';
 import { useRef, useMemo } from 'react';
+import { Vehicle, ShareNowVehicle, FreeNowVehicle } from '../../types/vehicles';
+import { useVehicleContext } from '../../context/VehicleContext';
 import TableSkeleton from './TableSkeleton';
+import './Table.css';
 
 interface TableProps {
-    vehicles: Vehicle[];
-    currentPage: number;
-    onPageChange: (page: number) => void;
-    sortOrder: 'asc' | 'desc';
     onSort: () => void;
-    selectedVehicle: Vehicle | null;
-    onVehicleSelect: (vehicle: Vehicle | null) => void;
-    itemsPerPage: number;
-    isLoading?: boolean;
 }
 
 const getVehicleCoordinates = (vehicle: Vehicle): string => {
@@ -41,38 +34,37 @@ const getVehicleFuel = (vehicle: Vehicle): number | undefined => {
     return undefined;
 };
 
-const Table = ({
-    vehicles,
-    currentPage,
-    onPageChange,
-    sortOrder,
-    onSort,
-    selectedVehicle,
-    onVehicleSelect,
-    itemsPerPage,
-    isLoading = false
-}: TableProps) => {
-    const totalPages = Math.ceil(vehicles.length / itemsPerPage);
+const Table = ({ onSort }: TableProps) => {
+    const {
+        sortedVehicles,
+        currentPage,
+        setCurrentPage,
+        sortOrder,
+        selectedVehicle,
+        setSelectedVehicle,
+        itemsPerPage,
+        isLoading
+    } = useVehicleContext();
+
+    const totalPages = Math.ceil(sortedVehicles.length / itemsPerPage);
     const tableRef = useRef<HTMLDivElement>(null);
 
     const currentVehicles = useMemo(() => {
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
-        return vehicles.slice(startIndex, endIndex);
-    }, [vehicles, currentPage, itemsPerPage]);
+        return sortedVehicles.slice(startIndex, endIndex);
+    }, [sortedVehicles, currentPage, itemsPerPage]);
 
     const scrollToTop = () => {
-        // Scroll the table to top
         if (tableRef.current) {
             tableRef.current.scrollTop = 0;
         }
-        // Scroll the main page to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handlePageChange = (page: number) => {
         if (page >= 1 && page <= totalPages) {
-            onPageChange(page);
+            setCurrentPage(page);
             scrollToTop();
         }
     };
@@ -81,7 +73,7 @@ const Table = ({
         return <TableSkeleton />;
     }
 
-    if (vehicles.length === 0) {
+    if (sortedVehicles.length === 0) {
         return (
             <div className="table-container card" role="status" aria-label="No vehicles available">
                 <div className="empty-state">No vehicles available</div>
@@ -110,12 +102,12 @@ const Table = ({
                             <tr
                                 key={vehicle.id}
                                 className={selectedVehicle?.id === vehicle.id ? 'selected' : ''}
-                                onClick={() => onVehicleSelect(vehicle)}
+                                onClick={() => setSelectedVehicle(vehicle)}
                                 role="button"
                                 tabIndex={0}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' || e.key === ' ') {
-                                        onVehicleSelect(vehicle);
+                                        setSelectedVehicle(vehicle);
                                     }
                                 }}
                                 aria-selected={selectedVehicle?.id === vehicle.id}
@@ -174,7 +166,7 @@ const Table = ({
                 >
                     «
                 </button>
-                <div className="pagination-info" aria-live="polite">
+                <div className="pagination-info">
                     Page {currentPage} of {totalPages}
                 </div>
                 <button

@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Map from './components/Map/Map'
 import Table from './components/Table/Table'
 import { Vehicle } from './types/vehicles'
 import { useVehicles } from './hooks/useVehicles'
+import { VehicleProvider } from './context/VehicleContext'
 import './styles/common.css'
 
 function App() {
@@ -12,13 +13,13 @@ function App() {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const itemsPerPage = 20;
 
-  const sortedVehicles = [...vehicles].sort((a, b) => {
+  const sortedVehicles = useMemo(() => [...vehicles].sort((a, b) => {
     const plateA = a.licencePlate.toLowerCase();
     const plateB = b.licencePlate.toLowerCase();
     return sortOrder === 'asc'
       ? plateA.localeCompare(plateB)
       : plateB.localeCompare(plateA);
-  });
+  }), [vehicles, sortOrder]);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -33,32 +34,34 @@ function App() {
     return <div className="app-container">Error: {error.message}</div>;
   }
 
+  const contextValue = {
+    vehicles,
+    isLoading,
+    error,
+    currentPage,
+    setCurrentPage,
+    sortOrder,
+    setSortOrder,
+    selectedVehicle,
+    setSelectedVehicle,
+    itemsPerPage,
+    currentPageVehicles,
+    sortedVehicles
+  };
+
   return (
-    <div className="app-container">
-      <div className="dashboard-layout">
-        <div className="map-wrapper">
-          <Map
-            currentPageVehicles={currentPageVehicles}
-            selectedVehicle={selectedVehicle}
-            onVehicleSelect={setSelectedVehicle}
-            isLoading={isLoading}
-          />
-        </div>
-        <div className="table-wrapper">
-          <Table
-            vehicles={sortedVehicles}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-            sortOrder={sortOrder}
-            onSort={handleSort}
-            selectedVehicle={selectedVehicle}
-            onVehicleSelect={setSelectedVehicle}
-            itemsPerPage={itemsPerPage}
-            isLoading={isLoading}
-          />
+    <VehicleProvider value={contextValue}>
+      <div className="app-container">
+        <div className="dashboard-layout">
+          <div className="map-wrapper">
+            <Map />
+          </div>
+          <div className="table-wrapper">
+            <Table onSort={handleSort} />
+          </div>
         </div>
       </div>
-    </div>
+    </VehicleProvider>
   )
 }
 

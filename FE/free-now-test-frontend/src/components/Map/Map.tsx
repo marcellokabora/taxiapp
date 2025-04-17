@@ -2,13 +2,7 @@ import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
 import { Vehicle, ShareNowVehicle, FreeNowVehicle } from '../../types/vehicles';
 import './Map.css';
 import { useCallback, useRef, useEffect, useState } from 'react';
-
-interface MapProps {
-    currentPageVehicles: Vehicle[];
-    selectedVehicle: Vehicle | null;
-    onVehicleSelect: (vehicle: Vehicle | null) => void;
-    isLoading?: boolean;
-}
+import { useVehicleContext } from '../../context/VehicleContext';
 
 const mapContainerStyle = {
     width: '100%',
@@ -54,9 +48,10 @@ const getVehicleCoordinates = (vehicle: Vehicle): { lat: number; lng: number } =
     }
 };
 
-const Map = ({ currentPageVehicles, selectedVehicle, onVehicleSelect, isLoading = false }: MapProps) => {
+const Map = () => {
     const mapRef = useRef<google.maps.Map | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
+    const { currentPageVehicles, selectedVehicle, setSelectedVehicle, isLoading } = useVehicleContext();
 
     const { isLoaded: isApiLoaded, loadError } = useLoadScript({
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
@@ -174,7 +169,7 @@ const Map = ({ currentPageVehicles, selectedVehicle, onVehicleSelect, isLoading 
                             position={coords}
                             title={`${vehicle.licencePlate} - ${vehicle.state}`}
                             icon={icon}
-                            onClick={() => onVehicleSelect(vehicle)}
+                            onClick={() => setSelectedVehicle(vehicle)}
                         />
                     );
                 })}

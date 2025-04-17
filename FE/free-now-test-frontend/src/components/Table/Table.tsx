@@ -1,6 +1,7 @@
 import { Vehicle, ShareNowVehicle, FreeNowVehicle } from '../../types/vehicles';
 import './Table.css';
 import { useRef, useMemo } from 'react';
+import TableSkeleton from './TableSkeleton';
 
 interface TableProps {
     vehicles: Vehicle[];
@@ -77,11 +78,7 @@ const Table = ({
     };
 
     if (isLoading) {
-        return (
-            <div className="table-container card" role="status" aria-label="Loading vehicles">
-                <div className="loading-spinner">Loading vehicles...</div>
-            </div>
-        );
+        return <TableSkeleton />;
     }
 
     if (vehicles.length === 0) {

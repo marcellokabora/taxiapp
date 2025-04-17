@@ -7,6 +7,7 @@ interface MapProps {
     currentPageVehicles: Vehicle[];
     selectedVehicle: Vehicle | null;
     onVehicleSelect: (vehicle: Vehicle | null) => void;
+    isLoading?: boolean;
 }
 
 const mapContainerStyle = {
@@ -53,7 +54,7 @@ const getVehicleCoordinates = (vehicle: Vehicle): { lat: number; lng: number } =
     }
 };
 
-const Map = ({ currentPageVehicles, selectedVehicle, onVehicleSelect }: MapProps) => {
+const Map = ({ currentPageVehicles, selectedVehicle, onVehicleSelect, isLoading = false }: MapProps) => {
     const mapRef = useRef<google.maps.Map | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -127,6 +128,17 @@ const Map = ({ currentPageVehicles, selectedVehicle, onVehicleSelect }: MapProps
             anchor: new window.google.maps.Point(isSelected ? 30 : 15, isSelected ? 50 : 30),
         };
     };
+
+    if (isLoading) {
+        return (
+            <div className="map-container card">
+                <div className="map-loading">
+                    <div className="map-spinner"></div>
+                    <p>Loading map...</p>
+                </div>
+            </div>
+        );
+    }
 
     if (loadError) {
         console.error('Error loading Google Maps API:', loadError);

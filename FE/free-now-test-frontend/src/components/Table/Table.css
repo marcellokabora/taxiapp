@@ -190,3 +190,36 @@
 .sortable:hover {
     background-color: var(--color-light-gray);
 }
+
+.skeleton-row {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-cell {
+    height: 20px;
+    background: linear-gradient(90deg,
+            var(--color-light-gray) 25%,
+            var(--color-gray) 37%,
+            var(--color-light-gray) 63%);
+    background-size: 400% 100%;
+    border-radius: 4px;
+    margin: 8px 0;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.loading-spinner {
+    display: none;
+}

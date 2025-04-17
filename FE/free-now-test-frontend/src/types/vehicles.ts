@@ -9,6 +9,13 @@ export interface BaseVehicle {
     licencePlate: string;
     condition: VehicleCondition;
     provider: VehicleProvider;
+    normalizedCoordinates: {
+        lat: number;
+        lng: number;
+    };
+    displayCoordinates: string;
+    displayAddress: string;
+    displayFuel: number | undefined;
 }
 
 export interface ShareNowVehicle extends BaseVehicle {

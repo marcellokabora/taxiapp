@@ -1,5 +1,5 @@
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
-import { Vehicle, ShareNowVehicle, FreeNowVehicle } from '../../types/vehicles';
+import { Vehicle } from '../../types/vehicles';
 import './Map.css';
 import { useCallback, useRef, useEffect, useState } from 'react';
 import { useVehicleContext } from '../../context/VehicleContext';
@@ -19,10 +19,9 @@ const calculateCenter = (vehicles: Vehicle[]): { lat: number; lng: number } => {
     }
 
     const sum = vehicles.reduce((acc, vehicle) => {
-        const coords = getVehicleCoordinates(vehicle);
         return {
-            lat: acc.lat + coords.lat,
-            lng: acc.lng + coords.lng
+            lat: acc.lat + vehicle.normalizedCoordinates.lat,
+            lng: acc.lng + vehicle.normalizedCoordinates.lng
         };
     }, { lat: 0, lng: 0 });
 
@@ -30,22 +29,6 @@ const calculateCenter = (vehicles: Vehicle[]): { lat: number; lng: number } => {
         lat: sum.lat / vehicles.length,
         lng: sum.lng / vehicles.length
     };
-};
-
-const getVehicleCoordinates = (vehicle: Vehicle): { lat: number; lng: number } => {
-    if (vehicle.provider === 'SHARE TAXI') {
-        const shareVehicle = vehicle as ShareNowVehicle;
-        return {
-            lat: shareVehicle.coordinates[1],
-            lng: shareVehicle.coordinates[0]
-        };
-    } else {
-        const freeVehicle = vehicle as FreeNowVehicle;
-        return {
-            lat: freeVehicle.coordinate.latitude,
-            lng: freeVehicle.coordinate.longitude
-        };
-    }
 };
 
 const Map = () => {
@@ -62,8 +45,7 @@ const Map = () => {
 
         const bounds = new google.maps.LatLngBounds();
         currentPageVehicles.forEach(vehicle => {
-            const coords = getVehicleCoordinates(vehicle);
-            bounds.extend(coords);
+            bounds.extend(vehicle.normalizedCoordinates);
         });
 
         mapRef.current.fitBounds(bounds, {
@@ -124,7 +106,7 @@ const Map = () => {
         };
     };
 
-    if (isLoading) {
+    if (isLoading || !isApiLoaded) {
         return (
             <div className="map-container card">
                 <div className="map-loading">
@@ -140,15 +122,6 @@ const Map = () => {
         return <div>Error loading map</div>;
     }
 
-    if (!isApiLoaded) {
-        return (
-            <div className="loading-spinner">
-                <div className="spinner"></div>
-                <p>Loading map...</p>
-            </div>
-        );
-    }
-
     return (
         <div className="map-container card">
             <GoogleMap
@@ -161,12 +134,11 @@ const Map = () => {
                 {currentPageVehicles.map((vehicle) => {
                     const icon = getMarkerIcon(vehicle);
                     if (!icon) return null;
-                    const coords = getVehicleCoordinates(vehicle);
 
                     return (
                         <Marker
                             key={vehicle.id}
-                            position={coords}
+                            position={vehicle.normalizedCoordinates}
                             title={`${vehicle.licencePlate} - ${vehicle.state}`}
                             icon={icon}
                             onClick={() => setSelectedVehicle(vehicle)}

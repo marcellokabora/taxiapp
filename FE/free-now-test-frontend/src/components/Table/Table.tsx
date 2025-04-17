@@ -1,5 +1,4 @@
 import { useRef, useMemo } from 'react';
-import { Vehicle, ShareNowVehicle, FreeNowVehicle } from '../../types/vehicles';
 import { useVehicleContext } from '../../context/VehicleContext';
 import TableSkeleton from './TableSkeleton';
 import './Table.css';
@@ -7,32 +6,6 @@ import './Table.css';
 interface TableProps {
     onSort: () => void;
 }
-
-const getVehicleCoordinates = (vehicle: Vehicle): string => {
-    if (vehicle.provider === 'SHARE TAXI') {
-        const shareVehicle = vehicle as ShareNowVehicle;
-        return `${shareVehicle.coordinates[0]}, ${shareVehicle.coordinates[1]}`;
-    } else {
-        const freeVehicle = vehicle as FreeNowVehicle;
-        return `${freeVehicle.coordinate.longitude}, ${freeVehicle.coordinate.latitude}`;
-    }
-};
-
-const getVehicleAddress = (vehicle: Vehicle): string => {
-    if (vehicle.provider === 'SHARE TAXI') {
-        const shareVehicle = vehicle as ShareNowVehicle;
-        return shareVehicle.address;
-    }
-    return '-';
-};
-
-const getVehicleFuel = (vehicle: Vehicle): number | undefined => {
-    if (vehicle.provider === 'SHARE TAXI') {
-        const shareVehicle = vehicle as ShareNowVehicle;
-        return shareVehicle.fuel;
-    }
-    return undefined;
-};
 
 const Table = ({ onSort }: TableProps) => {
     const {
@@ -118,18 +91,18 @@ const Table = ({ onSort }: TableProps) => {
                                     </span>
                                 </td>
                                 <td>{vehicle.licencePlate}</td>
-                                <td>{getVehicleCoordinates(vehicle)}</td>
-                                <td>{getVehicleAddress(vehicle)}</td>
+                                <td>{vehicle.displayCoordinates}</td>
+                                <td>{vehicle.displayAddress}</td>
                                 <td>
                                     <span className={`status-badge ${vehicle.state.toLowerCase()}`}>
                                         {vehicle.state.toLocaleLowerCase()}
                                     </span>
                                 </td>
                                 <td>
-                                    {getVehicleFuel(vehicle) !== undefined && (
+                                    {vehicle.displayFuel !== undefined && (
                                         <img
-                                            src={getVehicleFuel(vehicle)! > 50 ? '/battery_full.svg' : '/battery_low.svg'}
-                                            alt={`Fuel: ${getVehicleFuel(vehicle)}%`}
+                                            src={vehicle.displayFuel > 50 ? '/battery_full.svg' : '/battery_low.svg'}
+                                            alt={`Fuel: ${vehicle.displayFuel}%`}
                                             width="20"
                                             height="20"
                                             style={{ marginRight: '8px' }}

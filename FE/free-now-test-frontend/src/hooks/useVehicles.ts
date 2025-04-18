@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Vehicle, ShareNowVehicle, FreeNowVehicle, ShareNowResponse, FreeNowResponse } from '../types/vehicles';
+import { Vehicle, ShareNowVehicle, FreeNowVehicle, VehicleState, VehicleCondition, EngineType } from '../types/vehicles';
+import shareNowData from '../mocks/sharenow.json';
+import freeNowData from '../mocks/freenow.json';
 
 // Helper type for normalized coordinates
 interface NormalizedCoordinates {
@@ -60,10 +62,6 @@ export const useVehicles = () => {
         const fetchVehicles = async () => {
             try {
                 setIsLoading(true);
-                const [shareNowData, freeNowData] = await Promise.all([
-                    fetch('http://localhost:5001/share-now/vehicles').then(response => response.json() as Promise<ShareNowResponse>),
-                    fetch('http://localhost:5001/free-now/vehicles').then(response => response.json() as Promise<FreeNowResponse>)
-                ]);
 
                 // Transform SHARE TAXI vehicles
                 const shareNowVehicles: ShareNowVehicle[] = shareNowData.placemarks.map(vehicle => ({
@@ -72,16 +70,20 @@ export const useVehicles = () => {
                     normalizedCoordinates: normalizeCoordinates(vehicle as ShareNowVehicle),
                     displayCoordinates: `${vehicle.coordinates[0]}, ${vehicle.coordinates[1]}`,
                     displayAddress: vehicle.address,
-                    displayFuel: vehicle.fuel
+                    displayFuel: vehicle.fuel,
+                    state: vehicle.state as VehicleState,
+                    condition: vehicle.condition as VehicleCondition,
+                    coordinates: vehicle.coordinates as [number, number, number],
+                    engineType: vehicle.engineType as EngineType
                 }));
 
                 // Transform TAXI NOW vehicles
                 const freeNowVehicles: FreeNowVehicle[] = freeNowData.poiList.map(vehicle => ({
                     id: vehicle.id,
                     coordinate: vehicle.coordinate,
-                    state: vehicle.state,
+                    state: vehicle.state as VehicleState,
                     licencePlate: vehicle.licencePlate,
-                    condition: vehicle.condition,
+                    condition: vehicle.condition as VehicleCondition,
                     provider: 'TAXI NOW' as const,
                     normalizedCoordinates: normalizeCoordinates(vehicle as FreeNowVehicle),
                     displayCoordinates: `${vehicle.coordinate.longitude}, ${vehicle.coordinate.latitude}`,

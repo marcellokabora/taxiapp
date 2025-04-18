@@ -35,11 +35,3 @@ export interface FreeNowVehicle extends BaseVehicle {
 }
 
 export type Vehicle = ShareNowVehicle | FreeNowVehicle;
-
-export interface ShareNowResponse {
-    placemarks: ShareNowVehicle[];
-}
-
-export interface FreeNowResponse {
-    poiList: FreeNowVehicle[];
-} 

@@ -11,7 +11,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  const itemsPerPage = 20;
+  const itemsPerPage = 30;
 
   const sortedVehicles = useMemo(() => [...vehicles].sort((a, b) => {
     const plateA = a.licencePlate.toLowerCase();

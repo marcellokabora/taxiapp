@@ -1,1 +1,0 @@
-Please place the frontend part of your application in this folder.
